@@ -9,10 +9,10 @@ import org.apache.activemq.command.ConsumerInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatabaseAuthenitcationBroker extends BrokerFilter {
+public class CustomAuthenticationBroker extends BrokerFilter {
 
 	Logger logger=LoggerFactory.getLogger(getClass());
-	public DatabaseAuthenitcationBroker(Broker next) {
+	public CustomAuthenticationBroker(Broker next) {
 		super(next);
 		logger.info("******Constructor invoked in broker!!!: "+getBrokerName());
 		
