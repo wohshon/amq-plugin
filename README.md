@@ -12,7 +12,7 @@
 ```
 <plugins>
     ...
-    <bean id="dbAuthenticationPlugin" class="com.demo.amqplugins.CustomAuthenticationPlugin" xmlns="http://www.springframework.org/schema/beans">
+    <bean id="customAuthenticationPlugin" class="com.demo.amqplugins.CustomAuthenticationPlugin" xmlns="http://www.springframework.org/schema/beans">
     </bean>
 </plugins>
 ```
@@ -38,7 +38,7 @@
 ```
 <plugins>
     ...
-    <bean id="dbAuthenticationPlugin" class="com.demo.amqplugins.CustomAuthenticationPlugin" xmlns="http://www.springframework.org/schema/beans">
+    <bean id="customAuthenticationPlugin" class="com.demo.amqplugins.CustomAuthenticationPlugin" xmlns="http://www.springframework.org/schema/beans">
     </bean>
 </plugins>
 ```
