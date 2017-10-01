@@ -1,5 +1,8 @@
 package com.demo.amqplugins;
 
+import java.security.Principal;
+import java.util.Iterator;
+
 import org.apache.activemq.broker.Broker;
 import org.apache.activemq.broker.BrokerFilter;
 import org.apache.activemq.broker.ConnectionContext;
@@ -30,8 +33,16 @@ public class CustomAuthenticationBroker extends BrokerFilter {
 		logger.info("Inside addConsumer , info: "+info);
 		logger.info("TOPIC "+info.getDestination().toString());
 		logger.info("User  "+context.getUserName());
-		//logger.info("User  "+context.getSecurityContext().getAuthorizedWriteDests());
-		logger.info("Contextr  "+context.getSecurityContext());
+		logger.info("Context  "+context.getSecurityContext());
+		logger.info("Principals  "+context.getSecurityContext().getPrincipals());
+		logger.info("Write Destinations  "+context.getSecurityContext().getAuthorizedWriteDests());
+		Iterator<Principal> itr=context.getSecurityContext().getPrincipals().iterator();
+		while (itr.hasNext()) {
+			String name=itr.next().getName();
+			if (!name.equals(context.getUserName())) {
+				logger.info("ROLES: "+name);
+			}
+		}
 		return super.addConsumer(context, info);
 	}
 	
