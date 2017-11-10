@@ -1,2 +1,10 @@
-/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/CustomAuthenticationBroker.java
-/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/CustomAuthenticationPlugin.java
+/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/util/AuthenticateService.java
+/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/util/DBAuthorizationService.java
+/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/login/CustomAuthorizationMap.java
+/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/CustomBrokerPlugin.java
+/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/login/CustomLoginModule.java
+/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/CustomBrokerFilter.java
+/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/util/DBAuthenticationService.java
+/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/util/AuthorizationService.java
+/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/util/AuthorizationObject.java
+/home/virtuser/workspace10/amq/src/main/java/com/demo/amqplugins/util/AuthenticationObject.java
