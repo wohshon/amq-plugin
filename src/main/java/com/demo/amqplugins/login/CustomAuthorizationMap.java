@@ -42,16 +42,12 @@ public class CustomAuthorizationMap implements AuthorizationMap {
 		log.info("*auth map******admin "+dest);
 		results = this.getAuthorizationService().checkAuthorization();
 
-		String n=dest.getPhysicalName();
-		if (!dest.getPhysicalName().startsWith("ActiveMQ"))
-		{
-			if (dest.getPhysicalName().contains(".")) {
-				n = dest.getPhysicalName().replaceAll(".", "/");
-			} else if (dest.getPhysicalName().contains("/")) {
-				n = dest.getPhysicalName().replaceAll("/", ".");
-			}
-		}else {
-			n="ActiveMQ.Advisory.>";
+		String n=null;
+		if (dest.getDestinationTypeAsString().equals("Topic")) {
+			n=this.mqttCleanup(dest);
+		}
+		else {
+			n=dest.getPhysicalName();
 		}
 		AuthorizationObject auth=results.get(n);
 		Set<GroupPrincipal> gpset= new HashSet<GroupPrincipal>();
@@ -61,6 +57,8 @@ public class CustomAuthorizationMap implements AuthorizationMap {
 			gp=new GroupPrincipal(name);
 			gpset.add(gp);
 		}
+		this.addWildcard(gpset, ADMIN_TYPE);
+
 		return gpset;
 
 /*		Set<GroupPrincipal> testSet= new HashSet<GroupPrincipal>();
@@ -74,16 +72,12 @@ public class CustomAuthorizationMap implements AuthorizationMap {
 	public Set<GroupPrincipal> getReadACLs(ActiveMQDestination dest) {
 		log.info("*******read "+dest.getPhysicalName());
 		results = this.getAuthorizationService().checkAuthorization();
-		String n=dest.getPhysicalName();
-		if (!dest.getPhysicalName().startsWith("ActiveMQ"))
-		{
-			if (dest.getPhysicalName().contains(".")) {
-				n = dest.getPhysicalName().replaceAll(".", "/");
-			} else if (dest.getPhysicalName().contains("/")) {
-				n = dest.getPhysicalName().replaceAll("/", ".");
-			}
-		}else {
-			n="ActiveMQ.Advisory.>";
+		String n=null;
+		if (dest.getDestinationTypeAsString().equals("Topic")) {
+			n=this.mqttCleanup(dest);
+		}
+		else {
+			n=dest.getPhysicalName();
 		}
 		AuthorizationObject auth=results.get(n);
 		Set<GroupPrincipal> gpset= new HashSet<GroupPrincipal>();
@@ -93,6 +87,7 @@ public class CustomAuthorizationMap implements AuthorizationMap {
 			gp=new GroupPrincipal(name);
 			gpset.add(gp);
 		}
+		this.addWildcard(gpset, READ_TYPE);
 
 		return gpset;
 /*		Set<GroupPrincipal> testSet= new HashSet<GroupPrincipal>();
@@ -136,6 +131,32 @@ public class CustomAuthorizationMap implements AuthorizationMap {
 	public Set<GroupPrincipal> getWriteACLs(ActiveMQDestination dest) {
 		log.info("*******write "+dest);
 		results = this.getAuthorizationService().checkAuthorization();
+		String n=null;
+		if (dest.getDestinationTypeAsString().equals("Topic")) {
+			n=this.mqttCleanup(dest);
+		}
+		else {
+			n=dest.getPhysicalName();
+		}
+		AuthorizationObject auth=results.get(n);
+		Set<GroupPrincipal> gpset= new HashSet<GroupPrincipal>();
+		GroupPrincipal gp=null;
+		for (String name : auth.getReadACL()) {
+			log.info("--"+name);
+			gp=new GroupPrincipal(name);
+			gpset.add(gp);
+		}
+		this.addWildcard(gpset, WRITE_TYPE);
+		return gpset;
+/*	Set<GroupPrincipal> testSet= new HashSet<GroupPrincipal>();
+	GroupPrincipal gp=new GroupPrincipal("testrole");
+	GroupPrincipal gp1=new GroupPrincipal("admin");
+	testSet.add(gp1);
+	testSet.add(gp);
+	return testSet;		*/
+	}
+
+	private String mqttCleanup(ActiveMQDestination dest) {
 		String n=dest.getPhysicalName();
 		if (!dest.getPhysicalName().startsWith("ActiveMQ"))
 		{
@@ -146,22 +167,48 @@ public class CustomAuthorizationMap implements AuthorizationMap {
 			}
 		} else {
 			n="ActiveMQ.Advisory.>";
-		}
-		AuthorizationObject auth=results.get(n);
-		Set<GroupPrincipal> gpset= new HashSet<GroupPrincipal>();
-		GroupPrincipal gp=null;
-		for (String name : auth.getReadACL()) {
-			log.info("--"+name);
-			gp=new GroupPrincipal(name);
-			gpset.add(gp);
-		}
-		return gpset;
-/*	Set<GroupPrincipal> testSet= new HashSet<GroupPrincipal>();
-	GroupPrincipal gp=new GroupPrincipal("testrole");
-	GroupPrincipal gp1=new GroupPrincipal("admin");
-	testSet.add(gp1);
-	testSet.add(gp);
-	return testSet;		*/
+		}		
+		return n;
 	}
+	
+	private static final int  ADMIN_TYPE=0;
+	private static final int  READ_TYPE=1;
+	private static final int  WRITE_TYPE=2;
+	private void addWildcard(Set<GroupPrincipal> gpset, int type) {
+		String[] wc={"*",">"};
+		for (int i=0;i<wc.length;i++) {
+			AuthorizationObject ao=this.results.get(wc[i]);
+			if (ao!=null) {
+           		GroupPrincipal gp=null;
+           		switch (type) {
+		                   case ADMIN_TYPE : 
 
+		            		for (String name : ao.getReadACL()) {
+		            			log.info("--"+name);
+		            			gp=new GroupPrincipal(name);
+		            			gpset.add(gp);
+		            		};
+		                   case WRITE_TYPE : 
+
+		                	   for (String name : ao.getWriteACL()) {
+		            			log.info("--"+name);
+		            			gp=new GroupPrincipal(name);
+		            			gpset.add(gp);
+		            		};		                        
+		            		
+		                   case READ_TYPE : 
+
+		                	   for (String name : ao.getReadACL()) {
+		            			log.info("--"+name);
+		            			gp=new GroupPrincipal(name);
+		            			gpset.add(gp);
+		            		}		                        
+		        		             
+		        }//switch				
+				
+			}
+
+			
+		}
+	}
 }
