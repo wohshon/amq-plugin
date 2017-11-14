@@ -68,10 +68,15 @@ public class DBAuthorizationService implements AuthorizationService {
 		        write_grp = rs.getString("write_grp");
 		        read_grp = rs.getString("read_grp");
 		        admin_grp = rs.getString("admin_grp");
-		        ((AuthorizationObject)results.get(destname)).getAdminACL().add(admin_grp);
-		        ((AuthorizationObject)results.get(destname)).getWriteACL().add(write_grp);
-		        ((AuthorizationObject)results.get(destname)).getReadACL().add(read_grp);
-		        	
+		        if (admin_grp !=null) {
+		        	((AuthorizationObject)results.get(destname)).getAdminACL().add(admin_grp);
+		        }
+		        if (write_grp!=null) {
+		        	((AuthorizationObject)results.get(destname)).getWriteACL().add(write_grp);
+		        }
+		        if (read_grp !=null) {
+		        	((AuthorizationObject)results.get(destname)).getReadACL().add(read_grp);
+		        }
 		    }
 		
 		} catch (ClassNotFoundException e) {

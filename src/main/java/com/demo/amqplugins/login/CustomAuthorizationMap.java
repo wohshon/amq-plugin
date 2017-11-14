@@ -52,22 +52,18 @@ public class CustomAuthorizationMap implements AuthorizationMap {
 		AuthorizationObject auth=results.get(n);
 		Set<GroupPrincipal> gpset= new HashSet<GroupPrincipal>();
 		GroupPrincipal gp=null;
-		for (String name : auth.getReadACL()) {
-			log.info("--"+name);
-			gp=new GroupPrincipal(name);
-			gpset.add(gp);
+		if (auth.getAdminACL()!=null) {
+			for (String name : auth.getAdminACL()) {
+				log.info("--"+name);
+				gp=new GroupPrincipal(name);
+				gpset.add(gp);
+			}
 		}
 		this.addWildcard(gpset, ADMIN_TYPE);
 
 		return gpset;
 
-/*		Set<GroupPrincipal> testSet= new HashSet<GroupPrincipal>();
-		GroupPrincipal gp=new GroupPrincipal("testrole");
-		GroupPrincipal gp1=new GroupPrincipal("admin");
-		testSet.add(gp1);
-		testSet.add(gp);
-		return testSet;		
-*/	}
+	}
 
 	public Set<GroupPrincipal> getReadACLs(ActiveMQDestination dest) {
 		log.info("*******read "+dest.getPhysicalName());
@@ -82,20 +78,18 @@ public class CustomAuthorizationMap implements AuthorizationMap {
 		AuthorizationObject auth=results.get(n);
 		Set<GroupPrincipal> gpset= new HashSet<GroupPrincipal>();
 		GroupPrincipal gp=null;
-		for (String name : auth.getReadACL()) {
-			log.info("--"+name);
-			gp=new GroupPrincipal(name);
-			gpset.add(gp);
-		}
-		this.addWildcard(gpset, READ_TYPE);
+		if (auth.getReadACL()!=null) {
+		
+			for (String name : auth.getReadACL()) {
+				log.info("--"+name);
+				gp=new GroupPrincipal(name);
+				gpset.add(gp);
+			}
+		}	
+			this.addWildcard(gpset, READ_TYPE);
 
 		return gpset;
-/*		Set<GroupPrincipal> testSet= new HashSet<GroupPrincipal>();
-		GroupPrincipal gp=new GroupPrincipal("testrole");
-		GroupPrincipal gp1=new GroupPrincipal("admin");
-		testSet.add(gp1);
-		testSet.add(gp);
-		return testSet;	*/	
+
 	}
 
 	public Set<GroupPrincipal> getTempDestinationAdminACLs() {
@@ -141,19 +135,16 @@ public class CustomAuthorizationMap implements AuthorizationMap {
 		AuthorizationObject auth=results.get(n);
 		Set<GroupPrincipal> gpset= new HashSet<GroupPrincipal>();
 		GroupPrincipal gp=null;
-		for (String name : auth.getReadACL()) {
-			log.info("--"+name);
-			gp=new GroupPrincipal(name);
-			gpset.add(gp);
+		if (auth.getWriteACL()!=null) {
+
+			for (String name : auth.getWriteACL()) {
+				log.info("--"+name);
+				gp=new GroupPrincipal(name);
+				gpset.add(gp);
+			}
 		}
 		this.addWildcard(gpset, WRITE_TYPE);
 		return gpset;
-/*	Set<GroupPrincipal> testSet= new HashSet<GroupPrincipal>();
-	GroupPrincipal gp=new GroupPrincipal("testrole");
-	GroupPrincipal gp1=new GroupPrincipal("admin");
-	testSet.add(gp1);
-	testSet.add(gp);
-	return testSet;		*/
 	}
 
 	private String mqttCleanup(ActiveMQDestination dest) {
